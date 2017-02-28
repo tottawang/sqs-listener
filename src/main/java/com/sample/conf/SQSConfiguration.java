@@ -9,7 +9,7 @@ import org.springframework.cloud.aws.messaging.config.annotation.EnableSqs;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.amazonaws.services.sqs.AmazonSQSAsync;
+import com.amazonaws.services.sqs.AmazonSQSAsyncClient;
 
 @Configuration
 @EnableSqs
@@ -26,10 +26,11 @@ public class SQSConfiguration {
   }
 
   @Bean
-  public SimpleMessageListenerContainerFactory simpleMessageListenerContainerFactory(
-      AmazonSQSAsync amazonSqs) {
+  public SimpleMessageListenerContainerFactory simpleMessageListenerContainerFactory() {
     SimpleMessageListenerContainerFactory factory = new SimpleMessageListenerContainerFactory();
-    factory.setAmazonSqs(amazonSqs);
+    // Actually receive message is not called in async, pass in AmazonSQSAsyncClient instance just
+    // to make compile pass
+    factory.setAmazonSqs(new AmazonSQSAsyncClient());
     factory.setAutoStartup(true);
     factory.setMaxNumberOfMessages(10);
     factory.setWaitTimeOut(10);
